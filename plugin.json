@@ -1,0 +1,11 @@
+{
+  "Group": "Shipping",
+  "FriendlyName": "BoxNow Shipping",
+  "SystemName": "Shipping.BoxNow",
+  "Version": "4.80.3",
+  "SupportedVersions": [ "4.80" ],
+  "Author": "Nikos Methenitis - nmethenitis@gmail.com",
+  "DisplayOrder": 1,
+  "FileName": "Nop.Plugin.Shipping.BoxNow.dll",
+  "Description": "Box Now nopcommerce plugin."
+}
