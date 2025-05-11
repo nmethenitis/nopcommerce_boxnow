@@ -15,7 +15,6 @@ public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMetho
     protected readonly ILocalizationService _localizationService;
     protected readonly IShoppingCartService _shoppingCartService;
     protected readonly ISettingService _settingService;
-    protected readonly IShippingByWeightByTotalService _shippingByWeightByTotalService;
     protected readonly IShippingService _shippingService;
     protected readonly IStoreContext _storeContext;
     protected readonly IWebHelper _webHelper;
@@ -24,12 +23,11 @@ public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMetho
 
     #region Ctor
 
-    public BoxNowComputationMethod(BoxNowSettings boxNowSettings, ILocalizationService localizationService, IShoppingCartService shoppingCartService, ISettingService settingService, IShippingByWeightByTotalService shippingByWeightByTotalService, IShippingService shippingService, IStoreContext storeContext, IWebHelper webHelper) {
+    public BoxNowComputationMethod(BoxNowSettings boxNowSettings, ILocalizationService localizationService, IShoppingCartService shoppingCartService, ISettingService settingService, IShippingService shippingService, IStoreContext storeContext, IWebHelper webHelper) {
         _boxNowSettings = boxNowSettings;
         _localizationService = localizationService;
         _shoppingCartService = shoppingCartService;
         _settingService = settingService;
-        _shippingByWeightByTotalService = shippingByWeightByTotalService;
         _shippingService = shippingService;
         _storeContext = storeContext;
         _webHelper = webHelper;

@@ -29,8 +29,8 @@ public class BoxNowAdminController : BasePluginController {
         _storeContext = storeContext;
     }
 
-    #region Methods
     #endregion
+    #region Methods
 
     [CheckPermission(StandardPermission.Configuration.MANAGE_SHIPPING_SETTINGS)]
     public async Task<IActionResult> Configure() {
@@ -79,4 +79,5 @@ public class BoxNowAdminController : BasePluginController {
         _notificationService.SuccessNotification(await _localizationService.GetResourceAsync("Admin.Plugins.Saved"));
         return await Configure();
     }
+    #endregion
 }
