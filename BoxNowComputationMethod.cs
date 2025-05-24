@@ -1,5 +1,8 @@
 ﻿using Nop.Core;
+using Nop.Core.Domain.Catalog;
+using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Shipping;
+using Nop.Services.Attributes;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
@@ -8,7 +11,6 @@ using Nop.Services.Plugins;
 using Nop.Services.Shipping;
 using Nop.Services.Shipping.Tracking;
 using Nop.Web.Framework.Infrastructure;
-using Nop.Web.Models.Checkout;
 
 namespace Nop.Plugin.Shipping.BoxNow;
 public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMethod, IWidgetPlugin {

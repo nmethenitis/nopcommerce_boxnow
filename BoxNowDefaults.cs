@@ -9,5 +9,8 @@ public class BoxNowDefaults {
     public static string DeliveryRequestPath = "/api/v1/delivery-requests";
     public const string FIXED_RATE_SETTINGS_KEY = "ShippingRateComputationMethod.BoxNow.Rate.ShippingMethodId{0}";
     public const string TRANSIT_DAYS_SETTINGS_KEY = "ShippingRateComputationMethod.BoxNow.TransitDays.ShippingMethodId{0}";
-    
+    public static string BoxNowSelectedItem = "Plugin.Shipping.BoxNow.SelectedItem";
+    public static string BoxNowOrderLockerID = "Plugin.Shipping.BoxNow.LockerID";
+    public static string BoxNowOrderAddress = "Plugin.Shipping.BoxNow.Address";
+    public static string BoxNowOrderPostalCode = "Plugin.Shipping.BoxNow.PostalCode";
 }
