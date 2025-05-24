@@ -1,0 +1,23 @@
+@{
+    Layout = "";
+}
+@model BoxNowInfoModel
+<a href="javascript:;" class="boxnow-map-widget-button">SELECT BOX NOW</a>
+<div id="boxnowmap" style=""></div>
+<script type="text/javascript">
+    var _bn_map_widget_config = {
+        type: "popup",
+        autoselect: false,
+        autoclose: true,
+        partnerId: "@Model.PartnerID",
+        parentElement: "#boxnowmap",
+        afterSelect: function (selected) {
+            /*document.getElementById("example2_zip").value = selected.boxnowLockerPostalCode;
+            document.getElementById("example2_address").value = selected.boxnowLockerAddressLine1;
+            document.getElementById("example2_id").value = selected.boxnowLockerId;*/
+        }
+    };
+    (function (d) { var e = d.createElement("script"); e.src = "https://widget-cdn.boxnow.gr/map-widget/client/v5.js"; e.async = true; e.defer = true; d.getElementsByTagName("head")[0].appendChild(e); })(document);
+</script>
+
+<script src="/Plugins/Shipping.BoxNow/Content/js/BoxNowCheckout.js" asp-location="Footer"></script>

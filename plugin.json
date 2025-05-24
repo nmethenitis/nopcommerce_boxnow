@@ -1,6 +1,6 @@
 {
   "Group": "Shipping",
-  "FriendlyName": "BoxNow Shipping",
+  "FriendlyName": "BoxNow Shipping Method",
   "SystemName": "Shipping.BoxNow",
   "Version": "4.80.3",
   "SupportedVersions": [ "4.80" ],

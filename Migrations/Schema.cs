@@ -10,7 +10,7 @@ using Nop.Data.Migrations;
 using Nop.Plugin.Shipping.BoxNow.Domain;
 
 namespace Nop.Plugin.Shipping.BoxNow.Migrations;
-[NopMigration("2020/02/03 08:40:55:1687541", "Shipping.FixedByWeightByTotal base schema", MigrationProcessType.Installation)]
+[NopMigration("2025/05/11 19:27:00", "Shipping.BoxNow base schema", MigrationProcessType.Installation)]
 public class Schema : AutoReversingMigration {
     public override void Up() {
         Create.TableFor<BoxNowRecord>();

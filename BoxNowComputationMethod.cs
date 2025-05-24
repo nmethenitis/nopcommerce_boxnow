@@ -1,13 +1,17 @@
 ﻿using Nop.Core;
+using Nop.Core.Domain.Shipping;
+using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
 using Nop.Services.Orders;
 using Nop.Services.Plugins;
 using Nop.Services.Shipping;
 using Nop.Services.Shipping.Tracking;
+using Nop.Web.Framework.Infrastructure;
+using Nop.Web.Models.Checkout;
 
 namespace Nop.Plugin.Shipping.BoxNow;
-public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMethod {
+public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMethod, IWidgetPlugin {
 
     #region Fields
 
@@ -18,6 +22,8 @@ public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMetho
     protected readonly IShippingService _shippingService;
     protected readonly IStoreContext _storeContext;
     protected readonly IWebHelper _webHelper;
+
+    public bool HideInWidgetList => false;
 
     #endregion
 
@@ -37,9 +43,13 @@ public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMetho
 
     public override async Task InstallAsync() {
         await _localizationService.AddOrUpdateLocaleResourceAsync(new Dictionary<string, string> {
+            [$"Plugins.{BoxNowDefaults.PluginName}.Fields.Code"] = "Code",
+            [$"Plugins.{BoxNowDefaults.PluginName}.Fields.DisplayName"] = "Display Name",
+            [$"Plugins.{BoxNowDefaults.PluginName}.Fields.Description"] = "Description",
             [$"Plugins.{BoxNowDefaults.PluginName}.Fields.ClientID"] = "Client ID",
             [$"Plugins.{BoxNowDefaults.PluginName}.Fields.ClientSecret"] = "Client Secret",
             [$"Plugins.{BoxNowDefaults.PluginName}.Fields.PartnerID"] = "Partner ID",
+            [$"Plugins.{BoxNowDefaults.PluginName}.Fields.FixedRate"] = "Fixed Rate",
         });
         await base.InstallAsync();
     }
@@ -53,15 +63,41 @@ public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMetho
         return $"{_webHelper.GetStoreLocation()}Admin/BoxNow/Configure";
     }
 
-    public Task<decimal?> GetFixedRateAsync(GetShippingOptionRequest getShippingOptionRequest) {
-        throw new NotImplementedException();
+    public async Task<decimal?> GetFixedRateAsync(GetShippingOptionRequest getShippingOptionRequest) {
+        ArgumentNullException.ThrowIfNull(getShippingOptionRequest);
+        return _boxNowSettings.FixedRate;
     }
 
     public Task<IShipmentTracker> GetShipmentTrackerAsync() {
-        throw new NotImplementedException();
+        return Task.FromResult<IShipmentTracker>(null);
     }
 
     public Task<GetShippingOptionResponse> GetShippingOptionsAsync(GetShippingOptionRequest getShippingOptionRequest) {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(getShippingOptionRequest);
+        var response = new GetShippingOptionResponse();
+        if (getShippingOptionRequest.Items == null || !getShippingOptionRequest.Items.Any()) {
+            response.AddError("No shipment items");
+            return Task.FromResult(response);
+        }
+
+        response.ShippingOptions = new List<ShippingOption>() {
+            new ShippingOption() {
+                Name = _boxNowSettings.DisplayName,
+                Description = _boxNowSettings.Description,
+                Rate = _boxNowSettings.FixedRate,
+                TransitDays = 2
+            }
+        };            
+        return Task.FromResult(response);
+    }
+
+    public async Task<IList<string>> GetWidgetZonesAsync() {
+        return new List<string> { 
+            PublicWidgetZones.CheckoutShippingMethodBottom
+        };
+    }
+
+    public Type GetWidgetViewComponent(string widgetZone) {
+        return typeof(Components.BoxNowViewComponent);
     }
 }

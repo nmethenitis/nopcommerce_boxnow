@@ -11,14 +11,12 @@ namespace Nop.Plugin.Shipping.BoxNow.Data;
 public class BoxNowRecordBuilder : NopEntityBuilder<BoxNowRecord> {
     public override void MapEntity(CreateTableExpressionBuilder table) {
         table
-           .WithColumn(nameof(BoxNowRecord.Id))
-           .AsGuid()
            .WithColumn(nameof(BoxNowRecord.OrderGuid))
            .AsGuid()
            .WithColumn(nameof(BoxNowRecord.LockerId))
            .AsInt32()
            .WithColumn(nameof(BoxNowRecord.LabelUrl))
-           .AsString(1000)
+           .AsString(500)
            .Nullable();
     }
 }

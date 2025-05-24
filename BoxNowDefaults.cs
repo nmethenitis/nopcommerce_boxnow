@@ -7,4 +7,7 @@ public class BoxNowDefaults {
     public static (string Staging, string Production) ApiUrl => ("https://api-stage.boxnow.gr", "https://api-production.boxnow.gr");
     public static string AuthPath = "/api/v1/auth-sessions";
     public static string DeliveryRequestPath = "/api/v1/delivery-requests";
+    public const string FIXED_RATE_SETTINGS_KEY = "ShippingRateComputationMethod.BoxNow.Rate.ShippingMethodId{0}";
+    public const string TRANSIT_DAYS_SETTINGS_KEY = "ShippingRateComputationMethod.BoxNow.TransitDays.ShippingMethodId{0}";
+    
 }
