@@ -37,6 +37,9 @@
     <None Update="Content\js\BoxNowCheckout.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Views\BoxNowOrderInfo.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Views\ShowMap.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

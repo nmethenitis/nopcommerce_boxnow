@@ -95,11 +95,15 @@ public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMetho
 
     public async Task<IList<string>> GetWidgetZonesAsync() {
         return new List<string> { 
-            PublicWidgetZones.CheckoutShippingMethodBottom
+            PublicWidgetZones.CheckoutShippingMethodBottom,
+            AdminWidgetZones.OrderDetailsBlock
         };
     }
 
     public Type GetWidgetViewComponent(string widgetZone) {
+        if (widgetZone == AdminWidgetZones.OrderDetailsBlock)
+            return typeof(Components.BoxNowOrderInfoViewComponent);
+
         return typeof(Components.BoxNowViewComponent);
     }
 }
