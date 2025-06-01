@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Nop.Web.Framework.Mvc.Routing;
 
@@ -16,5 +11,13 @@ public class RouteProvider : IRouteProvider {
            name: BoxNowDefaults.BoxNowSelectedItem,
            pattern: "box-now/selected-item",
            defaults: new { controller = "BoxNowPublic", action = "SetSelectedLocker" });
+        endpointRouteBuilder.MapControllerRoute(
+           name: BoxNowDefaults.BoxNowCallVouvher,
+           pattern: "/Admin/BoxNow/SendToBoxNow",
+           defaults: new { controller = "BoxNow", action = "SendToBoxNow" });
+        endpointRouteBuilder.MapControllerRoute(
+           name: BoxNowDefaults.BoxNowCallVouvher,
+           pattern: "/Admin/BoxNow/GetParcelVoucher",
+           defaults: new { controller = "BoxNow", action = "GetParcelVoucher" });
     }
 }

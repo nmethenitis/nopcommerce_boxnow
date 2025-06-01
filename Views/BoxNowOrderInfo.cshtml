@@ -1,5 +1,4 @@
 ﻿@model BoxNowOrderInfoModel
-
 <nop-card>
     <div class="card card-secondary card-outline advanced-setting" data-card-name="order-boxnow" id="order-boxnow">
         <div class="card-header with-border clearfix">
@@ -27,14 +26,104 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <label>Address:</label>
                         <div>@Model.Address</div>
                     </div>
+                    @if (Model.BoxNowRecord != null)
+                    {
+                        <div class="col-md-6">
+                            <label>Parcel ID:</label>
+                            <div>@Model.BoxNowRecord.ParcelId</div>
+                        </div>
+                    }
                 </div>
-            }else{
+
+                <div class="form-group row mt-3">
+                    <div class="col-md-6">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sendToBoxNowModal">
+                            <i class="fas fa-truck"></i> Αποστολή σε BoxNow
+                        </button>
+                    </div>
+                    @if (Model.BoxNowRecord != null)
+                    {
+                        <div class="col-md-6">
+                            <button type="button" class="btn btn-primary" onclick="GetParcelVoucher(@Model.BoxNowRecord.ParcelId)">
+                                <i class="fas fa-file"></i> Download Parcel Voucher
+                            </button>
+                        </div>
+                    }
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="sendToBoxNowModal" tabindex="-1" role="dialog" aria-labelledby="sendToBoxNowLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="sendToBoxNowLabel">Επιβεβαίωση αποστολής</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                Είσαι σίγουρος ότι θέλεις να στείλεις την παραγγελία στο BoxNow;
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="sendToBoxNow(@Model.OrderId)">Ναι, αποστολή</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Ακύρωση</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
                 <p>No BoxNow information found for this order.</p>
             }
         </div>
     </div>
 </nop-card>
+<script>
+    function sendToBoxNow(orderId) {
+        fetch('@Model.ActionUrl', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            body: JSON.stringify({ OrderId: orderId })
+        })
+        .then(response => {
+            if (response.ok) {
+                $('#sendToBoxNowModal').modal('hide');
+                alert('Η παραγγελία στάλθηκε με επιτυχία στο BoxNow!');
+                // Optional: refresh ή ενημέρωση στοιχείων
+            } else {
+                return response.text().then(text => { throw new Error(text); });
+            }
+        })
+        .catch(error => {
+            alert('Σφάλμα: ' + error.message);
+        });
+    }
+
+    function GetParcelVoucher(parcelId) {
+        fetch('@Model.ParcelActionUrl', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+            },
+            body: JSON.stringify({ ParcelId: parcelId.toString() })
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `BoxNowLabel_Order_${parcelId}.pdf`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+    }
+</script>

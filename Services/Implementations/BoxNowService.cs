@@ -1,27 +1,26 @@
 ﻿using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
-using Nop.Core.Caching;
 using Nop.Plugin.Shipping.BoxNow.Helpers;
 using Nop.Plugin.Shipping.BoxNow.Models;
+using Nop.Plugin.Shipping.BoxNow.Services.Interfaces;
 
-namespace Nop.Plugin.Shipping.BoxNow.Services;
-public class BoxNowService {
+namespace Nop.Plugin.Shipping.BoxNow.Services.Implementations;
+public class BoxNowService : IBoxNowService {
 
     private readonly BoxNowSettings _boxNowSettings;
-    private readonly MemoryCacheManager _cache;
 
-    public BoxNowService(BoxNowSettings boxNowSettings, MemoryCacheManager cache) {
+    public BoxNowService(BoxNowSettings boxNowSettings) {
         _boxNowSettings = boxNowSettings;
-        _cache = cache;
     }
 
     public async Task<BoxNowDeliveryResponse> DeliveryRequest(BoxNowDeliveryRequest request) {
         using (var client = new HttpClient()) {
             client.BaseAddress = new Uri(GetApiBaseUrl());
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await GetTokenAsync()}");
+            client.DefaultRequestHeaders.Add("X-PartnerID", $"{_boxNowSettings.PartnerID}");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var payload = JsonSerializer.Serialize(request);
+            var payload = JsonSerializer.Serialize(request, JsonSerializerOptionDefaults.GetDefaultSettings());
             var content = new StringContent(payload, Encoding.UTF8, "application/json");
             var httpResponseMessage = await client.PostAsync(BoxNowDefaults.DeliveryRequestPath, content);
             if (httpResponseMessage.IsSuccessStatusCode) {
@@ -29,7 +28,35 @@ public class BoxNowService {
                 var response = JsonSerializer.Deserialize<BoxNowDeliveryResponse>(httpResponseContent, JsonSerializerOptionDefaults.GetDefaultSettings());
                 return response;
             } else {
-                throw new Exception($"Error: {httpResponseMessage.StatusCode} - {httpResponseMessage.ReasonPhrase}");
+                try {
+                    var httpResponseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                    var response = JsonSerializer.Deserialize<BoxNowErrorResponse>(httpResponseContent, JsonSerializerOptionDefaults.GetDefaultSettings());
+                    throw new Exception($"Box Now Delivery Request Error: {response.Code} - {BoxNowErrorCodes.Errors.GetValueOrDefault(response.Code)}");
+                } catch (Exception ex) {
+                    throw new Exception($"Error: {httpResponseMessage.StatusCode} - {httpResponseMessage.ReasonPhrase}");
+                }
+            }
+        }
+    }
+
+    public async Task<byte[]> ParcelRequest(BoxNowParcelRequest request) {
+        using (var client = new HttpClient()) {
+            client.BaseAddress = new Uri(GetApiBaseUrl());
+            client.DefaultRequestHeaders.Add("Authorization", $"Bearer {await GetTokenAsync()}");
+            client.DefaultRequestHeaders.Add("X-PartnerID", $"{_boxNowSettings.PartnerID}");
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var httpResponseMessage = await client.GetAsync($"{BoxNowDefaults.ParcelRequestPath}/{request.ParcelId}/label.{request.Type}");
+            if (httpResponseMessage.IsSuccessStatusCode) {
+                var httpResponseContent = await httpResponseMessage.Content.ReadAsByteArrayAsync();
+                return httpResponseContent;
+            } else {
+                try {
+                    var httpResponseContent = await httpResponseMessage.Content.ReadAsStringAsync();
+                    var response = JsonSerializer.Deserialize<BoxNowErrorResponse>(httpResponseContent, JsonSerializerOptionDefaults.GetDefaultSettings());
+                    throw new Exception($"Box Now Delivery Request Error: {response.Code} - {BoxNowErrorCodes.Errors.GetValueOrDefault(response.Code)}");
+                } catch (Exception ex) {
+                    throw new Exception($"Error: {httpResponseMessage.StatusCode} - {httpResponseMessage.ReasonPhrase}");
+                }
             }
         }
     }

@@ -21,6 +21,10 @@ public record ConfigurationModel : BaseNopModel {
     public string ClientID { get; set; }
     public bool ClientID_OverrideForStore { get; set; }
 
+    [NopResourceDisplayName("Plugins.Shipping.BoxNow.Fields.IsStaging")]
+    public bool IsStaging { get; set; }
+    public bool IsStaging_OverrideForStore { get; set; }
+
     [NopResourceDisplayName("Plugins.Shipping.BoxNow.Fields.ClientSecret")]
     public string ClientSecret { get; set; }
     public bool ClientSecret_OverrideForStore { get; set; }

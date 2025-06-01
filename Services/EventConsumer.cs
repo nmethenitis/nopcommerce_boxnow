@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Nop.Core.Domain.Orders;
+﻿using Nop.Core.Domain.Orders;
 using Nop.Services.Common;
 using Nop.Services.Customers;
 using Nop.Services.Events;
@@ -21,10 +16,13 @@ public class EventConsumer : IConsumer<OrderPlacedEvent> {
 
     public async Task HandleEventAsync(OrderPlacedEvent eventMessage) {
         var order = eventMessage.Order;
+        if (order.ShippingRateComputationMethodSystemName != BoxNowDefaults.PluginName) {
+            return;
+        }
         var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
         if (customer == null) {
             return;
-        }        
+        }
         var lockerId = await _genericAttributeService.GetAttributeAsync<string>(customer, BoxNowDefaults.BoxNowOrderLockerID);
         var address = await _genericAttributeService.GetAttributeAsync<string>(customer, BoxNowDefaults.BoxNowOrderAddress);
         var zip = await _genericAttributeService.GetAttributeAsync<string>(customer, BoxNowDefaults.BoxNowOrderPostalCode);

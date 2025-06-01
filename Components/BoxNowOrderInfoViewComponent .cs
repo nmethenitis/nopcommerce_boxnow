@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Nop.Data;
+using Nop.Plugin.Shipping.BoxNow.Domain;
 using Nop.Plugin.Shipping.BoxNow.Models;
 using Nop.Services.Common;
 using Nop.Services.Orders;
@@ -12,12 +9,12 @@ namespace Nop.Plugin.Shipping.BoxNow.Components;
 public class BoxNowOrderInfoViewComponent : ViewComponent {
     private readonly IOrderService _orderService;
     private readonly IGenericAttributeService _genericAttributeService;
+    private readonly IRepository<BoxNowRecord> _boxNowRecordRepository;
 
-    public BoxNowOrderInfoViewComponent(
-        IOrderService orderService,
-        IGenericAttributeService genericAttributeService) {
+    public BoxNowOrderInfoViewComponent(IOrderService orderService, IGenericAttributeService genericAttributeService, IRepository<BoxNowRecord> boxNowRecordRepository) {
         _orderService = orderService;
         _genericAttributeService = genericAttributeService;
+        _boxNowRecordRepository = boxNowRecordRepository;
     }
 
     public async Task<IViewComponentResult> InvokeAsync() {
@@ -32,10 +29,16 @@ public class BoxNowOrderInfoViewComponent : ViewComponent {
             var address = await _genericAttributeService.GetAttributeAsync<string>(order, BoxNowDefaults.BoxNowOrderAddress);
             var zip = await _genericAttributeService.GetAttributeAsync<string>(order, BoxNowDefaults.BoxNowOrderPostalCode);
 
+            var boxNowRecord = await _boxNowRecordRepository.Table.Where(x => x.OrderId == order.Id).FirstOrDefaultAsync();
+
             var model = new BoxNowOrderInfoModel {
+                OrderId = orderId,
                 LockerId = lockerId,
                 Address = address,
-                ZipCode = zip
+                ZipCode = zip,
+                ActionUrl = Url.Action("SendToBoxNow", "BoxNow"),
+                ParcelActionUrl = Url.Action("GetParcelVoucher", "BoxNow"),
+                BoxNowRecord = boxNowRecord == null ? null : boxNowRecord
             };
 
             return View("~/Plugins/Shipping.BoxNow/Views/BoxNowOrderInfo.cshtml", model);

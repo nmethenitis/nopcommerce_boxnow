@@ -2,7 +2,8 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Nop.Core.Infrastructure;
-using Nop.Plugin.Shipping.BoxNow.Services;
+using Nop.Plugin.Shipping.BoxNow.Services.Implementations;
+using Nop.Plugin.Shipping.BoxNow.Services.Interfaces;
 
 namespace Nop.Plugin.Payments.VivaPayments.Infrastracture;
 internal class NopStartup : INopStartup {
@@ -12,6 +13,6 @@ internal class NopStartup : INopStartup {
     }
 
     public void ConfigureServices(IServiceCollection services, IConfiguration configuration) {
-        services.AddScoped<BoxNowService>();
+        services.AddScoped<IBoxNowService, BoxNowService>();
     }
 }
