@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Nop.Core;
 using Nop.Core.Domain.Orders;
 using Nop.Plugin.Shipping.BoxNow.Models;
 using Nop.Services.Common;
-using Nop.Services.Customers;
 using Nop.Services.Orders;
-using Nop.Services.Shipping;
 using Nop.Web.Factories;
 using Nop.Web.Framework.Components;
 

@@ -1,8 +1,5 @@
 ﻿using Nop.Core;
-using Nop.Core.Domain.Catalog;
-using Nop.Core.Domain.Orders;
 using Nop.Core.Domain.Shipping;
-using Nop.Services.Attributes;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
 using Nop.Services.Localization;
@@ -89,12 +86,12 @@ public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMetho
                 Rate = _boxNowSettings.FixedRate,
                 TransitDays = 2
             }
-        };            
+        };
         return Task.FromResult(response);
     }
 
     public async Task<IList<string>> GetWidgetZonesAsync() {
-        return new List<string> { 
+        return new List<string> {
             PublicWidgetZones.CheckoutShippingMethodBottom,
             AdminWidgetZones.OrderDetailsBlock
         };
