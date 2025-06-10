@@ -148,7 +148,7 @@ public class BoxNowController : BaseAdminController {
         var lockerId = await _genericAttributeService.GetAttributeAsync<string>(order, BoxNowDefaults.BoxNowOrderLockerID);
         var request = new BoxNowDeliveryRequest() {
             TypeOfService = "same-day",
-            OrderNumber = order.Id.ToString() + "-1",
+            OrderNumber = $"{order.Id.ToString()}-1",
             InvoiceValue = order.OrderTotal.ToString(),
             PaymentMode = "prepaid",
             AmountToBeCollected = "0.0",
