@@ -144,6 +144,7 @@ public class BoxNowController : BaseAdminController {
         var originAddress = await _addressService.GetAddressByIdAsync(_shippingSettings.ShippingOriginAddressId);
         var destinationAddress = await _addressService.GetAddressByIdAsync((int)order.ShippingAddressId);
         var country = await _countryService.GetCountryByAddressAsync(destinationAddress);
+        var countryCode = country == null ? "GR" : country.TwoLetterIsoCode;
         var customer = await _customerService.GetCustomerByIdAsync(order.CustomerId);
         var lockerId = await _genericAttributeService.GetAttributeAsync<string>(order, BoxNowDefaults.BoxNowOrderLockerID);
         var request = new BoxNowDeliveryRequest() {
@@ -154,25 +155,25 @@ public class BoxNowController : BaseAdminController {
             AmountToBeCollected = "0.0",
             AllowReturn = true,
             NotifyOnAccepted = originAddress.Email,
-            NotifySMSOnAccepted = originAddress.PhoneNumber.StartsWith("+") ? originAddress.PhoneNumber : $"{CountryPhoneCodes.Codes.GetValueOrDefault(country.TwoLetterIsoCode)}{originAddress.PhoneNumber}",
+            NotifySMSOnAccepted = originAddress.PhoneNumber.StartsWith("+") ? originAddress.PhoneNumber : $"{CountryPhoneCodes.Codes.GetValueOrDefault(countryCode)}{originAddress.PhoneNumber}",
             Origin = new LocationModel() {
-                ContactNumber = originAddress.PhoneNumber.StartsWith("+") ? originAddress.PhoneNumber : $"{CountryPhoneCodes.Codes.GetValueOrDefault(country.TwoLetterIsoCode)}{originAddress.PhoneNumber}",
+                ContactNumber = originAddress.PhoneNumber.StartsWith("+") ? originAddress.PhoneNumber : $"{CountryPhoneCodes.Codes.GetValueOrDefault(countryCode)}{originAddress.PhoneNumber}",
                 ContactEmail = originAddress.Email,
                 ContactName = $"{originAddress.LastName} {originAddress.FirstName}",
                 Name = $"{originAddress.LastName} {originAddress.FirstName}",
                 AddressLine1 = originAddress.Address1,
                 PostalCode = originAddress.ZipPostalCode,
-                Country = country.TwoLetterIsoCode,
+                Country = countryCode,
                 LocationId = "2"
             },
             Destination = new LocationModel() {
-                ContactNumber = destinationAddress.PhoneNumber.StartsWith("+") ? destinationAddress.PhoneNumber : $"{CountryPhoneCodes.Codes.GetValueOrDefault(country.TwoLetterIsoCode)}{destinationAddress.PhoneNumber}",
+                ContactNumber = destinationAddress.PhoneNumber.StartsWith("+") ? destinationAddress.PhoneNumber : $"{CountryPhoneCodes.Codes.GetValueOrDefault(countryCode)}{destinationAddress.PhoneNumber}",
                 ContactEmail = destinationAddress.Email,
                 ContactName = $"{destinationAddress.LastName} {destinationAddress.FirstName}",
                 Name = $"{destinationAddress.LastName} {destinationAddress.FirstName}",
                 AddressLine1 = destinationAddress.Address1,
                 PostalCode = destinationAddress.ZipPostalCode,
-                Country = country.TwoLetterIsoCode,
+                Country = countryCode,
                 LocationId = lockerId
             },
             Items = new List<ItemModel>() {
