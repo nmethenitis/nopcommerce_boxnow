@@ -5,4 +5,5 @@ public record BoxNowInfoModel : BaseNopModel {
     public string DisplayName { get; set; }
     public string Description { get; set; }
     public string PartnerID { get; set; }
+    public string CountryCode { get; set; }
 }

@@ -4,4 +4,7 @@
 @model BoxNowInfoModel
 <a href="javascript:;" class="boxnow-map-widget-button"></a>
 <div id="boxnowmap" style=""></div>
+<script>
+    window.boxNowCountryCode= '@Model.CountryCode';
+</script>
 <script src="/Plugins/Shipping.BoxNow/Content/js/BoxNowCheckout.js" asp-location="Footer"></script>
