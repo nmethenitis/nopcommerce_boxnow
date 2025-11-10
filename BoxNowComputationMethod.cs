@@ -2,6 +2,7 @@
 using Nop.Core.Domain.Shipping;
 using Nop.Services.Cms;
 using Nop.Services.Configuration;
+using Nop.Services.Directory;
 using Nop.Services.Localization;
 using Nop.Services.Orders;
 using Nop.Services.Plugins;
@@ -21,6 +22,7 @@ public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMetho
     protected readonly IShippingService _shippingService;
     protected readonly IStoreContext _storeContext;
     protected readonly IWebHelper _webHelper;
+    protected readonly ICountryService _countryService;
 
     public bool HideInWidgetList => false;
 
@@ -28,7 +30,7 @@ public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMetho
 
     #region Ctor
 
-    public BoxNowComputationMethod(BoxNowSettings boxNowSettings, ILocalizationService localizationService, IShoppingCartService shoppingCartService, ISettingService settingService, IShippingService shippingService, IStoreContext storeContext, IWebHelper webHelper) {
+    public BoxNowComputationMethod(BoxNowSettings boxNowSettings, ILocalizationService localizationService, IShoppingCartService shoppingCartService, ISettingService settingService, IShippingService shippingService, IStoreContext storeContext, IWebHelper webHelper, ICountryService countryService) {
         _boxNowSettings = boxNowSettings;
         _localizationService = localizationService;
         _shoppingCartService = shoppingCartService;
@@ -36,6 +38,7 @@ public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMetho
         _shippingService = shippingService;
         _storeContext = storeContext;
         _webHelper = webHelper;
+        _countryService = countryService;
     }
 
     #endregion
@@ -64,30 +67,39 @@ public class BoxNowComputationMethod : BasePlugin, IShippingRateComputationMetho
 
     public async Task<decimal?> GetFixedRateAsync(GetShippingOptionRequest getShippingOptionRequest) {
         ArgumentNullException.ThrowIfNull(getShippingOptionRequest);
-        return _boxNowSettings.FixedRate;
+        var country = await _countryService.GetCountryByIdAsync(getShippingOptionRequest.ShippingAddress?.CountryId ?? 0);
+        if(country == null) {
+            return _boxNowSettings.FixedRate;
+        }
+        return country.TwoLetterIsoCode == "GR" ? _boxNowSettings.FixedRate : _boxNowSettings.FixedRateCyprus;
     }
 
     public Task<IShipmentTracker> GetShipmentTrackerAsync() {
         return Task.FromResult<IShipmentTracker>(null);
     }
 
-    public Task<GetShippingOptionResponse> GetShippingOptionsAsync(GetShippingOptionRequest getShippingOptionRequest) {
+    public async Task<GetShippingOptionResponse> GetShippingOptionsAsync(GetShippingOptionRequest getShippingOptionRequest) {
         ArgumentNullException.ThrowIfNull(getShippingOptionRequest);
         var response = new GetShippingOptionResponse();
         if (getShippingOptionRequest.Items == null || !getShippingOptionRequest.Items.Any()) {
             response.AddError("No shipment items");
-            return Task.FromResult(response);
+            return response;
+        }
+        var country = await _countryService.GetCountryByIdAsync(getShippingOptionRequest.ShippingAddress?.CountryId ?? 0);
+        if(country == null) {
+            response.AddError("Shipping country is not set");
+            return response;
         }
 
         response.ShippingOptions = new List<ShippingOption>() {
             new ShippingOption() {
                 Name = _boxNowSettings.DisplayName,
                 Description = _boxNowSettings.Description,
-                Rate = _boxNowSettings.FixedRate,
+                Rate = country.TwoLetterIsoCode == "GR" ? _boxNowSettings.FixedRate : _boxNowSettings.FixedRateCyprus,
                 TransitDays = 2
             }
         };
-        return Task.FromResult(response);
+        return response;
     }
 
     public async Task<IList<string>> GetWidgetZonesAsync() {
