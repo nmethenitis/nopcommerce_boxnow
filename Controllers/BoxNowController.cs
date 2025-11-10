@@ -78,6 +78,7 @@ public class BoxNowController : BaseAdminController {
             ClientSecret = boxNowSettings.ClientSecret,
             PartnerID = boxNowSettings.PartnerID,
             FixedRate = boxNowSettings.FixedRate,
+            FixedRateCyprus = boxNowSettings.FixedRateCyprus,
             IsStaging = boxNowSettings.IsStaging
         };
         if (storeScope > 0) {
@@ -88,6 +89,7 @@ public class BoxNowController : BaseAdminController {
             model.ClientSecret_OverrideForStore = _settingService.SettingExists(boxNowSettings, x => x.ClientSecret, storeScope);
             model.PartnerID_OverrideForStore = _settingService.SettingExists(boxNowSettings, x => x.PartnerID, storeScope);
             model.FixedRate_OverrideForStore = _settingService.SettingExists(boxNowSettings, x => x.FixedRate, storeScope);
+            model.FixedRateCyprus_OverrideForStore = _settingService.SettingExists(boxNowSettings, x => x.FixedRateCyprus, storeScope);
             model.IsStaging_OverrideForStore = _settingService.SettingExists(boxNowSettings, x => x.IsStaging, storeScope);
         }
 
@@ -112,6 +114,7 @@ public class BoxNowController : BaseAdminController {
         boxNowSettings.ClientSecret = model.ClientSecret;
         boxNowSettings.PartnerID = model.PartnerID;
         boxNowSettings.FixedRate = model.FixedRate;
+        boxNowSettings.FixedRateCyprus = model.FixedRateCyprus;
         boxNowSettings.IsStaging = model.IsStaging;
 
         /* We do not clear cache after each setting update.
@@ -125,6 +128,7 @@ public class BoxNowController : BaseAdminController {
         await _settingService.SaveSettingOverridablePerStoreAsync(boxNowSettings, x => x.ClientSecret, model.ClientSecret_OverrideForStore, storeScope, true);
         await _settingService.SaveSettingOverridablePerStoreAsync(boxNowSettings, x => x.PartnerID, model.PartnerID_OverrideForStore, storeScope, true);
         await _settingService.SaveSettingOverridablePerStoreAsync(boxNowSettings, x => x.FixedRate, model.FixedRate_OverrideForStore, storeScope, true);
+        await _settingService.SaveSettingOverridablePerStoreAsync(boxNowSettings, x => x.FixedRateCyprus, model.FixedRateCyprus_OverrideForStore, storeScope, true);
         await _settingService.SaveSettingOverridablePerStoreAsync(boxNowSettings, x => x.IsStaging, model.IsStaging_OverrideForStore, storeScope, true);
         //now clear settings cache
         _settingService.ClearCache();

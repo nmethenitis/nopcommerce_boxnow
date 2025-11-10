@@ -9,5 +9,6 @@ public class BoxNowSettings : ISettings {
     public string ClientSecret { get; set; }
     public string PartnerID { get; set; }
     public decimal FixedRate { get; set; }
+    public decimal FixedRateCyprus { get; set; }
     public bool IsStaging { get; set; }
 }

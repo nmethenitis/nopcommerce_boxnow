@@ -36,4 +36,8 @@ public record ConfigurationModel : BaseNopModel {
     [NopResourceDisplayName("Plugins.Shipping.BoxNow.Fields.Rate")]
     public decimal FixedRate { get; set; }
     public bool FixedRate_OverrideForStore { get; set; }
+
+    [NopResourceDisplayName("Plugins.Shipping.BoxNow.Fields.CyprusRate")]
+    public decimal FixedRateCyprus { get; set; }
+    public bool FixedRateCyprus_OverrideForStore { get; set; }
 }
