@@ -6,5 +6,11 @@
 <div id="boxnowmap" style=""></div>
 <script>
     window.boxNowCountryCode= '@Model.CountryCode';
+    window.partnerId = '@Model.PartnerID';
 </script>
+@if(Model.CountryCode == "CY") {
+    <script src="https://widget-cdn.boxnow.cy/map-widget/client/v5.js" async defer></script>
+} else {
+    <script src="https://widget-cdn.boxnow.gr/map-widget/client/v5.js" async defer></script>
+}
 <script src="/Plugins/Shipping.BoxNow/Content/js/BoxNowCheckout.js" asp-location="Footer"></script>

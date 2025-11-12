@@ -14,7 +14,7 @@ var _bn_map_widget_config = {
   type: "popup",
   autoselect: false,
   autoclose: true,
-  partnerId: "@Model.PartnerID",
+  partnerId: window.partnerId,
   parentElement: "#boxnowmap",
   afterSelect: function (selected) {
     allowSubmit = true;
@@ -44,8 +44,3 @@ var _bn_map_widget_config = {
       });
   }
 };
-if (window.boxNowCountryCode == "CY") {
-  (function (d) { var e = d.createElement("script"); e.src = "https://widget-cdn.boxnow.cy/map-widget/client/v5.js"; e.async = true; e.defer = true; d.getElementsByTagName("head")[0].appendChild(e); })(document);
-} else {
-  (function (d) { var e = d.createElement("script"); e.src = "https://widget-cdn.boxnow.gr/map-widget/client/v5.js"; e.async = true; e.defer = true; d.getElementsByTagName("head")[0].appendChild(e); })(document);
-}
